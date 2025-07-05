@@ -1,0 +1,89 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-ast
+        stages: [pre-commit]
+      - id: end-of-file-fixer
+        stages: [pre-commit]
+      - id: mixed-line-ending
+        stages: [pre-commit]
+      - id: check-toml
+        stages: [pre-commit]
+      - id: trailing-whitespace
+        stages: [pre-commit]
+      - id: check-docstring-first
+        stages: [pre-commit]
+      - id: check-yaml
+        stages: [pre-commit]
+      - id: check-json
+        stages: [pre-commit]
+      - id: pretty-format-json
+        args: [--autofix, --indent=2]
+        stages: [pre-commit]
+      - id: check-added-large-files
+        stages: [pre-commit]
+      - id: check-merge-conflict
+        stages: [pre-commit]
+      - id: debug-statements
+        stages: [pre-commit]
+      - id: check-executables-have-shebangs
+        language: python
+        files: \.py$
+        stages: [pre-commit]
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: remove-crlf
+        stages: [pre-commit]
+      - id: remove-tabs
+        stages: [pre-commit]
+      - id: forbid-crlf
+        stages: [pre-commit]
+      - id: forbid-tabs
+        stages: [pre-commit]
+  - repo: https://github.com/myint/eradicate
+    rev: 3.0.0
+    hooks:
+      - id: eradicate
+        name: eradicate
+        description: Apply eradicate
+        entry: eradicate
+        language: python
+        files: \.py$
+        args: [--in-place]
+        stages: [pre-commit]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+      - id: pyupgrade
+        args: [--py39-plus]
+        stages: [pre-commit]
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.17.2
+    hooks:
+      - id: yamlfmt
+        stages: [pre-commit]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.1
+    hooks:
+      - id: ruff
+        args: [check, --select, I, --fix]
+        name: ruff-isort
+        stages: [pre-commit]
+      - id: ruff-format
+        stages: [pre-commit]
+      - id: ruff
+        stages: [pre-commit]
+  - repo: https://github.com/akaihola/darglint2
+    rev: v1.8.2
+    hooks:
+      - id: darglint2
+        args: [-s, sphinx]
+        exclude: ^tests/.*$
+        stages: [pre-commit]
+  - repo: https://github.com/facebook/pyrefly
+    rev: 0.21.0
+    hooks:
+      - id: pyrefly-typecheck
+        exclude: ^tests/.*$
