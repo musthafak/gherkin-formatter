@@ -1,0 +1,52 @@
+[project]
+name = "gherkin-formatter"
+version = "0.1.0"
+description = "A command-line tool to format Gherkin .feature files."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "gherkin-official",
+  "ruamel.yaml>=0.17.21", # Added ruamel.yaml and a common version
+]
+
+[project.optional-dependencies]
+dev = ["black", "isort", "pre-commit", "pyrefly", "pytest", "ruff"]
+
+[project.scripts]
+gherkin-formatter = "gherkin_formatter.formatter:main"
+
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+pythonpath = [".", "gherkin_formatter"]
+testpaths = ["tests"]
+
+[tool.pyrefly]
+python-version = "3.9.0"
+use-untyped-imports = true
+ignore-missing-source = false
+
+[tool.ruff.lint]
+ignore = [
+  "T201",   # use of print
+  "D203",   # incorrect-blank-line-before-class",
+  "D212",   # multi-line-summary-first-line
+  "ANN204", # annotation of __init__()
+  "FIX002", # we need to keep TODOs in the code
+]
+select = ["ALL"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+  "S101",    # use of assert
+  "D103",    # doc-strings are not mandatory for unittests
+  "E501",    # line too long errors are ignored for unittests
+  "PLR2004", # Magic value used in comparison
+  "S607",    # start a process with a partial executable path
+  "S603",    # subprocess: check for execution of untrusted input
+]
