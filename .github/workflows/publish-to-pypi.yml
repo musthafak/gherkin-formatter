@@ -1,0 +1,32 @@
+name: Publish Python Package to PyPI
+on:
+  release:
+    types: [created] # This will trigger the workflow when a new release is published
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/gherkin-formatter # Optional: Link to your PyPI project
+    permissions:
+      id-token: write # This is required for trusted publishing
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9' # Specify a Python version for building
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+      - name: Build package
+        run: python -m build
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # No API token needed here if trusted publishing is configured in PyPI.
+        # Otherwise, you would need to add:
+        # with:
+        #   user: __token__
+        #   password: ${{ secrets.PYPI_API_TOKEN }}
