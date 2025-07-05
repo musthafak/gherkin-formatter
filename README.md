@@ -20,13 +20,6 @@ Install the Gherkin Formatter using pip:
 pip install gherkin-formatter
 ```
 
-Or, for development, clone the repository and install editable with development dependencies:
-```bash
-git clone <repository-url>
-cd gherkin-formatter
-pip install -e .[dev]
-```
-
 ## Usage
 
 To format your Gherkin files, run:
@@ -93,8 +86,8 @@ You can use `gherkin-formatter` to automatically format your `.feature` files in
    ```yaml
    # .pre-commit-config.yaml
    repos:
-   -   repo: https://github.com/m-k-s-d/gherkin-formatter
-       rev: <tag-or-sha>  # e.g., v0.1.0 or a specific commit SHA
+   -   repo: https://github.com/musthafak/gherkin-formatter
+       rev: <tag-or-sha>  # e.g., v0.1.1 or a specific commit SHA
        hooks:
        -   id: format-feature-files
            # You can override or add arguments here if needed:
@@ -113,7 +106,7 @@ Now, `gherkin-formatter` will automatically run on your `.feature` files each ti
 
 ## Development
 
-This project uses `pytest` for running tests and `pre-commit` for code quality checks.
+This project uses `pytest` for running tests and [pre-commit](https://pre-commit.com/) for code quality checks.
 
 **Setup:**
 
@@ -121,13 +114,13 @@ After cloning the repository, it's recommended to use a virtual environment:
 
 ```bash
 # Clone the repository (if you haven't already)
-# git clone <repository-url>
+# git clone git@github.com:musthafak/gherkin-formatter.git
 # cd gherkin-formatter
 
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -e .[dev]
-pre-commit install # Installs pre-commit hooks
+pre-commit install # Installs pre-commit hooks for auto formatting and linting
 ```
 
 **Running Tests:**
@@ -140,11 +133,7 @@ pytest
 
 **Code Style & Linting:**
 
-This project uses `black`, `isort`, and `ruff` for formatting and linting, managed via `pre-commit` hooks. Ensure hooks are installed and run them before committing:
-
-```bash
-pre-commit run --all-files
-```
+This project uses `ruff` and `pyrefly` for formatting and linting, managed via [pre-commit](https://pre-commit.com/) hooks.
 
 ## Contributing
 
