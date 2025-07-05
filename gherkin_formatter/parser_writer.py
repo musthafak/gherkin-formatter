@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import textwrap
 from io import StringIO
 from typing import TYPE_CHECKING, Any
 
@@ -169,7 +170,7 @@ class GherkinFormatter:
         if description:
             lines.extend(
                 self._indent_line(line.strip(), current_indent_level)
-                for line in description.strip().split("\n")
+                for line in description.strip().splitlines()
             )
         return lines
 
@@ -283,7 +284,7 @@ class GherkinFormatter:
 
             lines.extend(
                 self._indent_line(line, current_indent_level)
-                for line in json_formatted_str.split("\n")
+                for line in json_formatted_str.splitlines()
             )
         except json.JSONDecodeError:
             # If not JSON, try to parse as YAML.
@@ -346,10 +347,11 @@ class GherkinFormatter:
         ruamel_yaml_instance.dump(yaml_obj, string_stream)
         yaml_formatted_str = string_stream.getvalue().rstrip("\n")
         string_stream.close()
+        yaml_formatted_str = textwrap.dedent(yaml_formatted_str)
 
         lines.extend(
             self._indent_line(line, current_indent_level)
-            for line in yaml_formatted_str.split("\n")
+            for line in yaml_formatted_str.splitlines()
         )
 
     def _format_step(
@@ -678,7 +680,7 @@ class GherkinFormatter:
         lines.append(self._indent_line(f"{keyword}{name_part}", current_indent_level))
 
         if feature_node.get("description"):
-            desc_lines: list[str] = feature_node["description"].strip().split("\n")
+            desc_lines: list[str] = feature_node["description"].strip().splitlines()
             for line in desc_lines:
                 if line.strip():  # Only indent non-empty description lines
                     lines.append(
