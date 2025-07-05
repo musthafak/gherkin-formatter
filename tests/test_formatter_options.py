@@ -26,8 +26,6 @@ def test_format_steps_alignment_options() -> None:
         {"keyword": "When ", "text": "a longer keyword step", "location": {"line": 2}},
         {"keyword": "Then ", "text": "medium", "location": {"line": 3}},
     ]
-    # Max keyword length: "Given " (6), "When " (5), "Then " (5)
-    # Stripped: "Given"(5), "When"(4), "Then"(4). Max is 5.
 
     # Left alignment (default)
     formatter_left = GherkinFormatter(
@@ -35,10 +33,6 @@ def test_format_steps_alignment_options() -> None:
         alignment="left",
     )
     formatted_left = formatter_left._format_steps_block(steps_ast_nodes, 0)  # noqa: SLF001
-    # Keywords are ljust(max_len).rstrip()
-    # "Given".ljust(5).rstrip() -> "Given"
-    # "When".ljust(5).rstrip()  -> "When"
-    # "Then".ljust(5).rstrip()  -> "Then"
     expected_left = [
         "Given short",
         "When a longer keyword step",
@@ -52,10 +46,6 @@ def test_format_steps_alignment_options() -> None:
         alignment="right",
     )
     formatted_right = formatter_right._format_steps_block(steps_ast_nodes, 0)  # noqa: SLF001
-    # Keywords are rjust(max_len).rstrip()
-    # "Given".rjust(5).rstrip() -> "Given"
-    # "When".rjust(5).rstrip()  -> " When" (leading space)
-    # "Then".rjust(5).rstrip()  -> " Then" (leading space)
     expected_right = [
         "Given short",
         " When a longer keyword step",  # Note the space before When

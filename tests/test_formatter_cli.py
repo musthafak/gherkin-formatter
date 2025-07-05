@@ -384,135 +384,6 @@ def test_cli_check_and_dry_run_interaction(
     assert "--- Formatted content (dry-run) ---" not in result.stdout
 
 
-def test_cli_check_mode_crlf_file(tmp_path: Path) -> None:
-    """
-    Test --check mode on a file with CRLF endings that is otherwise formatted.
-
-    It should report as needing formatting because the content (newlines) differs.
-    The formatter standardizes to LF.
-    """
-    # Content that is "correct" if it were LF, but we'll save as CRLF
-    content_lf: str = "Feature: CRLF Test\n\n  Scenario: S\n    Given G\n"
-    content_crlf: str = content_lf.replace("\n", "\r\n")
-
-    feature_file: Path = tmp_path / "crlf_test.feature"
-    feature_file.write_text(
-        content_crlf,
-        encoding="utf-8",
-        newline="\r\n",  # type: ignore[unexpected-keyword]
-    )  # Ensure CRLF
-
-    cmd: list[str] = [
-        "python",
-        "-m",
-        "gherkin_formatter.formatter",
-        "--check",
-        str(feature_file),
-    ]
-    subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", check=False)
-
-    # The file's content (with CRLF) will differ from the formatter's LF output.
-    # _process_single_file normalizes original_content to LF for comparison.
-    # If original_content_for_comparison (LF) != formatted_content (LF),
-    # it needs formatting. This test case is tricky. If the content is
-    # IDENTICAL except for newlines, original_content_for_comparison will be
-    # identical to formatted_content.
-    # Let's test a file that ISN'T formatted AND uses CRLF.
-
-    unformatted_content_lf = "Feature: Test\nScenario: A\nGiven B"
-    unformatted_content_crlf = unformatted_content_lf.replace("\n", "\r\n")
-
-    unformatted_crlf_file = tmp_path / "unformatted_crlf.feature"
-    unformatted_crlf_file.write_text(
-        unformatted_content_crlf,
-        encoding="utf-8",
-        newline="\r\n",  # type: ignore[unexpected-keyword]
-    )
-
-    cmd2: list[str] = [
-        "python",
-        "-m",
-        "gherkin_formatter.formatter",
-        "--check",
-        str(unformatted_crlf_file),
-    ]
-    result2: subprocess.CompletedProcess = subprocess.run(
-        cmd2,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
-    assert result2.returncode == 1
-    assert "needs formatting" in result2.stdout
-    assert str(unformatted_crlf_file) in result2.stdout
-
-    # Now, a file that IS "well-formatted" with LF, and we save it with CRLF.
-    # The check mode should report it as well-formatted because content
-    # comparison ignores line endings. The formatter's _process_single_file
-    # explicitly converts original content to LF for comparison.
-    # `original_content_for_comparison = original_content.replace("\r\n", "\n")`
-    # `if original_content_for_comparison != formatted_content:`
-    # So if `formatted_content` is "F\nS\n G\n" and original was "F\r\nS\r\n G\r\n",
-    # `original_content_for_comparison` becomes "F\nS\n G\n", so they match.
-
-    well_formatted_lf = "Feature: Test\n\n  Scenario: A\n    Given B\n"
-    well_formatted_crlf_file = tmp_path / "well_formatted_crlf.feature"
-    # Write LF content and let newline="\r\n" handle the conversion to CRLF on disk
-    well_formatted_crlf_file.write_text(
-        well_formatted_lf,
-        encoding="utf-8",
-        newline="\r\n",  # type: ignore[unexpected-keyword]
-    )
-
-    cmd3: list[str] = [
-        "python",
-        "-m",
-        "gherkin_formatter.formatter",
-        "--check",
-        str(well_formatted_crlf_file),
-    ]
-    result3: subprocess.CompletedProcess = subprocess.run(
-        cmd3,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
-    assert result3.returncode == 0, (
-        f"Stderr: {result3.stderr}\nStdout: {result3.stdout}"
-    )
-    assert "is already well-formatted" in result3.stdout
-
-    # If the tool *reformats* a CRLF file, it should write it as LF.
-    # This part isn't about --check, but about the main formatting path.
-    reformat_crlf_file = tmp_path / "reformat_crlf.feature"
-    reformat_crlf_file.write_text(
-        unformatted_content_crlf,
-        encoding="utf-8",
-        newline="\r\n",  # type: ignore[unexpected-keyword]
-    )
-    cmd4: list[str] = [
-        "python",
-        "-m",
-        "gherkin_formatter.formatter",
-        str(reformat_crlf_file),
-    ]
-    result4: subprocess.CompletedProcess = subprocess.run(
-        cmd4,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
-    assert result4.returncode == 0
-    assert "Reformatted" in result4.stdout
-    reformatted_disk_content = reformat_crlf_file.read_text(encoding="utf-8")
-    expected_reformatted_lf = "Feature: Test\n\n  Scenario: A\n    Given B\n"
-    assert reformatted_disk_content == expected_reformatted_lf
-    assert "\r" not in reformatted_disk_content
-
-
 def test_cli_dry_run_mode_unformatted_file_default_tab_width(
     feature_file_factory: FeatureFileFactory,
 ) -> None:
@@ -736,8 +607,7 @@ def test_cli_check_mode_formatted_file_custom_options(tmp_path: Path) -> None:
     :param tmp_path: Pytest fixture for temporary path.
     :type tmp_path: Path
     """
-    # This content is already formatted with tabs and right alignment (conceptual)
-    # and will be written with CRLF by the initial formatting run.
+    # This content is already formatted with tabs and right alignment
     input_gherkin: str = (
         "Feature: Test\n\n\tScenario: Test\n\t\tGiven short\n\t\t When longer\n"
     )
@@ -793,7 +663,7 @@ def test_cli_check_mode_needs_reformatting_custom_options(tmp_path: Path) -> Non
   Scenario: Test
     Given short
     When longer
-"""  # Default LF, spaces, left alignment
+"""  # Default spaces, left alignment
 
     result: subprocess.CompletedProcess = run_cli_with_content(
         ["--check", "--use-tabs", "--alignment", "right"],

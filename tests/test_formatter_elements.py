@@ -66,9 +66,6 @@ def test_format_feature_description_mixed_lines() -> None:
     assert actual_output == expected_output
 
 
-# --- Tests for DocString Formatting (JSON, YAML, Plain Text) ---
-
-
 def _get_docstring_feature_ast(
     docstring_content: str,
     docstring_delimiter: str = '"""',
@@ -241,18 +238,6 @@ def test_format_docstring_empty_content() -> None:
     expected_output = "\n".join(expected_lines)
     actual_output = formatter.format().strip()
 
-    # If the content is just one empty line, it becomes one indented line.
-    # The parser_writer._format_docstring splits by "\n".
-    # An empty string content.split("\n") -> ['']
-    # This results in one indented line.
-    # If the original content was "\n", content.split("\n") -> ['', '']
-    # This results in two indented lines.
-
-    # For truly empty content "", the current code will produce one indented line.
-    # Let's adjust expectation slightly if this needs to be zero lines.
-    # Current behavior: an empty docstring content `""` results in one blank
-    # indented line. If the content is `\n`, it results in two blank indented lines.
-    # The test above with `""` content checks for one blank line.
     assert actual_output == expected_output
 
 

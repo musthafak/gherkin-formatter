@@ -41,7 +41,6 @@ def parse_gherkin_file(file_path: Path) -> GherkinDocument | None:
 
         return Parser().parse(file_content)
     except CompositeParserException as e:
-        # Consider logging this error instead of just printing if this were a library
         print(f"Error parsing file: {file_path}\n{e}", file=sys.stderr)
         return None
     except FileNotFoundError:
@@ -306,7 +305,6 @@ class GherkinFormatter:
 
     def _raise_if_empty_yaml_content(self, content: str) -> None:
         if not content.strip():
-            # Use a more specific exception or handle appropriately
             msg = "Empty content, treat as plain text"
             raise ValueError(msg) from None
 
@@ -728,8 +726,6 @@ class GherkinFormatter:
             return "\n"  # Empty line for an empty AST
 
         # Initialize comments_to_process if not already done
-        # (e.g., if format is called multiple times).
-        # Though typically, a new Formatter instance would be created.
         if not hasattr(self, "comments_to_process"):
             self.comments_to_process = sorted(
                 self.ast.get("comments", []),
@@ -742,10 +738,6 @@ class GherkinFormatter:
             output_lines.extend(self._format_feature(feature_node, 0))
 
         # Add any remaining comments (e.g., comments at the end of the file).
-        # These are typically unindented or should adopt the last known indent
-        # if applicable. For simplicity, adding them with 0 indent.
-        # A more sophisticated approach might try to determine the last
-        # block's indent.
         if self.comments_to_process:
             # If there were feature lines, add a blank line before trailing
             # comments if not already blank.
@@ -754,8 +746,6 @@ class GherkinFormatter:
             for comment_node in self.comments_to_process:
                 text = comment_node.get("text", "").strip()
                 # Comments at the very end of the file are typically not indented,
-                # or their indentation is relative to the last element,
-                # which is complex to track here.
                 # Defaulting to 0 indentation for trailing comments.
                 output_lines.append(self._indent_line(text, 0))
 

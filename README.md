@@ -77,6 +77,40 @@ gherkin-formatter [OPTIONS] [FILES_OR_DIRECTORIES...]
     gherkin-formatter --use-tabs --multi-line-tags my_feature.feature
     ```
 
+### Using Gherkin Formatter as a pre-commit hook
+
+You can use `gherkin-formatter` to automatically format your `.feature` files in your projects using [pre-commit](https://pre-commit.com/).
+
+1. **Install pre-commit**
+   If not already installed, you can install it with pip:
+   ```bash
+   pip install pre-commit
+   ```
+
+2. **Configure the pre-commit hook**
+   In your own project's repository, create or update the `.pre-commit-config.yaml` file with the following:
+
+   ```yaml
+   # .pre-commit-config.yaml
+   repos:
+   -   repo: https://github.com/m-k-s-d/gherkin-formatter
+       rev: <tag-or-sha>  # e.g., v0.1.0 or a specific commit SHA
+       hooks:
+       -   id: format-feature-files
+           # You can override or add arguments here if needed:
+           # args: [--tab-width, "4"]
+   ```
+   Replace `<tag-or-sha>` with the latest version tag from this repository or a specific commit SHA.
+
+3. **Install the git hooks**
+   Navigate to your project's root directory and run:
+   ```bash
+   pre-commit install
+   ```
+
+Now, `gherkin-formatter` will automatically run on your `.feature` files each time you make a commit, ensuring they are consistently formatted.
+
+
 ## Development
 
 This project uses `pytest` for running tests and `pre-commit` for code quality checks.
@@ -111,51 +145,6 @@ This project uses `black`, `isort`, and `ruff` for formatting and linting, manag
 ```bash
 pre-commit run --all-files
 ```
-
-### Using Gherkin Formatter as a pre-commit hook in your projects
-
-You can use `gherkin-formatter` to automatically format your `.feature` files in your own Gherkin-based projects using `pre-commit`.
-
-1.  **Ensure `pre-commit` is installed.** If not, install it:
-    ```bash
-    pip install pre-commit
-    ```
-
-2.  **Create a `pre-commit-hooks.yaml` file in this repository (or ensure it exists).**
-    This file tells `pre-commit` about the hook provided by `gherkin-formatter`. If you are developing `gherkin-formatter` itself, this file should already be present.
-    ```yaml
-    # pre-commit-hooks.yaml
-    -   id: format-feature-files
-        name: Format feature files
-        entry: gherkin-formatter # This assumes gherkin-formatter is in the PATH
-        language: python
-        types: [gherkin]
-        args: [] # Add any default arguments for gherkin-formatter here
-        description: "Formats Gherkin feature files using gherkin-formatter."
-    ```
-    *Note: The `entry` point might need to be adjusted depending on how `gherkin-formatter` is installed in the environment where the pre-commit hook runs. If it's installed as a system script, `gherkin-formatter` should work. If you're pointing to a local development version, you might use `entry: path/to/dev/gherkin-formatter-script.py` or similar.*
-
-3.  **In your own Gherkin project's repository, create or update `.pre-commit-config.yaml`:**
-    Add the following to your `.pre-commit-config.yaml` to use the hook from this `gherkin-formatter` repository. Replace `<url-to-this-gherkin-formatter-repo>` with the actual URL (e.g., GitHub URL) and `<tag-or-sha>` with a specific tag, commit SHA, or branch from the `gherkin-formatter` repository (e.g., `main` or a version tag like `v1.0.0`).
-
-    ```yaml
-    # .pre-commit-config.yaml in your project
-    repos:
-    -   repo: <url-to-this-gherkin-formatter-repo> # e.g., https://github.com/yourusername/gherkin-formatter
-        rev: <tag-or-sha> # e.g., main or v0.1.0
-        hooks:
-        -   id: format-feature-files
-            # You can override or add arguments here if needed:
-            # args: [--tab-width, "4"]
-    ```
-
-4.  **Install the git hooks in your project:**
-    Navigate to your project's root directory and run:
-    ```bash
-    pre-commit install
-    ```
-
-Now, `gherkin-formatter` will automatically run on your `.feature` files each time you make a commit, ensuring they are consistently formatted.
 
 ## Contributing
 

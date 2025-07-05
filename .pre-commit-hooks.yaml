@@ -1,7 +1,8 @@
 - id: format-feature-files
   name: Format feature files
-  entry: gherkin-formatter # This assumes gherkin-formatter is in the PATH
+  entry: gherkin_formatter.formatter
   language: python
-  types: [gherkin]
-  args: [] # Add any default arguments for gherkin-formatter here
+  language_version: python3
+  files: "\\.(feature)$"
+  args: []
   description: "Formats Gherkin feature files using gherkin-formatter."

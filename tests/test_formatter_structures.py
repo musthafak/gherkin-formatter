@@ -108,7 +108,6 @@ def test_format_json_docstring_without_mediatype_scenario_from_issue_4spaces() -
 
 def test_format_docstring_empty_or_whitespace() -> None:
     """Test formatting of docstrings that are empty or contain only whitespace."""
-    # Empty docstring
     empty_doc_ast: dict[str, Any] = create_docstring_step_ast("")
     formatter_empty: GherkinFormatter = GherkinFormatter(empty_doc_ast, tab_width=2)
     expected_empty_lines: list[str] = [
@@ -118,7 +117,6 @@ def test_format_docstring_empty_or_whitespace() -> None:
         "    Given a step with a docstring",
         '      """',
         # No extra line for empty content,
-        # aligning with test_format_docstring_empty_content
         '      """',
     ]
     assert formatter_empty.format().strip() == "\n".join(expected_empty_lines)
@@ -233,9 +231,6 @@ def test_format_invalid_json_docstring_as_plain_text() -> None:
     ast: dict[str, Any] = create_docstring_step_ast(invalid_json_content)
     formatter: GherkinFormatter = GherkinFormatter(ast, tab_width=2)
 
-    # Updated expectation: ruamel.yaml parses this and formats it as structured YAML
-    # Updated expectation: ruamel.yaml parses this and formats it as structured YAML.
-    # Observed output is flow style.
     expected_lines: list[str] = [
         "Feature: Test Feature",
         "",
