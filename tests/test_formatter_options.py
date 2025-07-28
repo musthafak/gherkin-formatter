@@ -72,3 +72,19 @@ def test_format_multi_line_tags_direct() -> None:
     formatted_tags_indent1 = formatter._format_tags(tags_ast, 1)  # noqa: SLF001
     expected_tags_indent1 = ["  @tag1", "  @tag2", "  @long_tag3"]
     assert formatted_tags_indent1 == expected_tags_indent1
+
+
+def test_format_docstring_with_skip_docstrings_enabled() -> None:
+    """Test _format_docstring behavior when skip_docstrings=True."""
+    ast: dict[str, Any] = {"feature": None, "comments": []}
+    formatter = GherkinFormatter(ast, skip_docstrings=True)
+
+    # Test with JSON content that would normally be formatted
+    unformatted_json_content = '{"key": "value",    "nested":    {"array": [1, 2, 3]}}'
+    docstring_node = {"content": unformatted_json_content, "delimiter": '"""'}
+
+    formatted_lines = formatter._format_docstring(docstring_node, 1)  # noqa: SLF001
+
+    # When skip_docstrings=True, content should be preserved as-is
+    expected_lines = ['  """', f"  {unformatted_json_content}", '  """']
+    assert formatted_lines == expected_lines

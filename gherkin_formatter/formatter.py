@@ -129,6 +129,7 @@ def _process_single_file(
             use_tabs=args.use_tabs,
             alignment=args.alignment,
             multi_line_tags=args.multi_line_tags,
+            skip_docstrings=args.skip_docstrings,
         )
         formatted_content: str = formatter.format()
 
@@ -202,6 +203,11 @@ def main() -> None:
         "--multi-line-tags",
         action="store_true",
         help="Format tags over multiple lines (default: single-line).",
+    )
+    parser.add_argument(
+        "--skip-docstrings",
+        action="store_true",
+        help="Do not format docstrings",
     )
     parser.add_argument(
         "--version",
