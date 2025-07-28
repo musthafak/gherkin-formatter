@@ -676,3 +676,36 @@ def test_cli_check_mode_needs_reformatting_custom_options(tmp_path: Path) -> Non
     )
     assert "needs formatting" in result.stdout
     assert "file(s) that need formatting" in result.stderr
+
+
+def test_cli_skip_docstrings_option(tmp_path: Path) -> None:
+    """
+    Test --skip-docstrings option preserves docstring content as-is.
+
+    :param tmp_path: Pytest fixture for temporary path.
+    :type tmp_path: Path
+    """
+    input_gherkin: str = '''
+Feature: DocString Test
+
+  Scenario: Test with docstring
+    Given a step with a docstring
+      """
+      {
+
+          "a": "This should not be formatted"
+
+
+      }
+      """
+    When another step
+'''.strip()
+
+    result: subprocess.CompletedProcess = run_cli_with_content(
+        ["--skip-docstrings"],
+        input_gherkin,
+        tmp_path,
+    )
+    assert result.returncode == 0
+    formatted_content: str = (tmp_path / "test.feature").read_text(encoding="utf-8")
+    assert formatted_content.strip() == input_gherkin.strip()

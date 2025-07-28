@@ -73,6 +73,7 @@ class GherkinFormatter:
         use_tabs: bool = False,
         alignment: str = "left",
         multi_line_tags: bool = False,
+        skip_docstrings: bool = False,
     ) -> None:
         """
         Initialize the GherkinFormatter.
@@ -93,6 +94,7 @@ class GherkinFormatter:
         self.use_tabs: bool = use_tabs
         self.alignment: str = alignment
         self.multi_line_tags: bool = multi_line_tags
+        self.skip_docstrings: bool = skip_docstrings
         self.indent_str = "\t" if self.use_tabs else " " * self.tab_width
         self.comments_to_process: list[dict[str, Any]] = sorted(  # type: ignore[misc]
             self.ast.get("comments", []),
@@ -272,6 +274,16 @@ class GherkinFormatter:
         lines.append(self._indent_line(delimiter, current_indent_level))
 
         content: str = docstring_node.get("content", "")
+
+        if self.skip_docstrings:
+            lines.extend(
+                [
+                    self._indent_line(row, current_indent_level) if row.strip() else ""
+                    for row in content.split("\n")
+                ]
+            )
+            lines.append(self._indent_line(delimiter, current_indent_level))
+            return lines
 
         try:
             json_obj: Any = json.loads(content)

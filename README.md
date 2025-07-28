@@ -40,6 +40,7 @@ gherkin-formatter [OPTIONS] [FILES_OR_DIRECTORIES...]
     *   `left`: Left-aligns keywords (default).
     *   `right`: Right-aligns keywords based on the longest keyword in the current block, providing a visually structured layout.
 *   `--multi-line-tags`: Formats each tag on a new line, indented under the associated element. Default is single-line formatting where all tags appear on one line.
+*   `--skip-docstrings`: Skip docstrings formatting - useful if using custom code on it
 *   `--dry-run`: Preview the changes that would be made without modifying the actual files. The formatted output (if different) will be printed to the console.
 *   `--check`: Check if files are formatted correctly according to the specified options. No files are changed.
     *   Exits with code `0` if all files are well-formatted.
