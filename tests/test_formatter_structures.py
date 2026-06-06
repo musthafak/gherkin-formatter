@@ -337,8 +337,8 @@ def test_format_datatable_cell_with_pipe() -> None:
         "",
         "  Scenario: Test Scenario",
         "    Given a step with a data table",
-        "      | Header            |",
-        "      | Value | with pipe |",
+        "      | Header             |",
+        "      | Value \\| with pipe |",
     ]
     expected_output = "\n".join(expected_lines)
     actual_output = formatter.format().strip()
