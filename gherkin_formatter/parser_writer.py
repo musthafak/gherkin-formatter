@@ -259,15 +259,18 @@ class GherkinFormatter:
                 self._indent_line("| |", current_indent_level) for _ in table_node_rows
             ]
 
+        def _escape_pipe(val: str) -> str:
+            return val.replace("|", "\\|")
+
         col_widths: list[int] = [0] * num_columns
         for row_data in table_node_rows:
             for i, cell in enumerate(row_data["cells"]):
-                col_widths[i] = max(col_widths[i], len(cell["value"]))
+                col_widths[i] = max(col_widths[i], len(_escape_pipe(cell["value"])))
 
         formatted_lines: list[str] = []
         for row_data in table_node_rows:
             formatted_cells: list[str] = [
-                cell["value"].ljust(col_widths[i])
+                _escape_pipe(cell["value"]).ljust(col_widths[i])
                 for i, cell in enumerate(row_data["cells"])
             ]
             formatted_lines.append(
